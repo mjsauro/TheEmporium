@@ -1,0 +1,13 @@
+﻿@page
+@model TheEmporium.Pages.BrowseProductsModel
+@{
+    ViewData["Title"] = "BrowseProducts";
+}
+
+<h1>Browse Products</h1>
+
+@foreach (var product in Model.ProductType)
+{
+    <h2>@product.Name</h2>
+}
+
