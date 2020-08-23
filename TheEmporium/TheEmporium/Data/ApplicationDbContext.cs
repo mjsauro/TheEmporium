@@ -11,6 +11,7 @@ namespace TheEmporium.Data
     {
         public DbSet<Product> Product { get; set; }
         public DbSet<ProductType> ProductType { get; set; }
+        public DbSet<Images> Images { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {

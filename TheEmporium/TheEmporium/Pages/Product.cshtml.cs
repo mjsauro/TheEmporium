@@ -1,19 +1,18 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 using TheEmporium.Models;
+using TheEmporium.Repositories.Interfaces;
+
 namespace TheEmporium.Pages
 {
     public class ProductModel : PageModel
     {
+        private readonly IProductRepository _productRepository;
 
-        private readonly Data.ApplicationDbContext _context;
-
-        public ProductModel(Data.ApplicationDbContext context)
+        public ProductModel(IProductRepository productRepository)
         {
-            _context = context;
+            _productRepository = productRepository;
         }
         public Product Product { get; set; }
         public async Task<IActionResult> OnGetAsync(int? id)
@@ -23,7 +22,7 @@ namespace TheEmporium.Pages
                 return NotFound();
             }
 
-            Product = await _context.Product.Include(m => m.ProductType).FirstOrDefaultAsync(m => m.Id == id);
+            Product = await _productRepository.GetProductByIdAsync((int) id);
 
             if (Product == null)
             {

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TheEmporium.Data;
 
 namespace TheEmporium.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200823202410_RemoveTypeFromProductTable")]
+    partial class RemoveTypeFromProductTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -219,24 +221,6 @@ namespace TheEmporium.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("TheEmporium.Models.Images", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Location")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Images");
-                });
-
             modelBuilder.Entity("TheEmporium.Models.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -256,8 +240,8 @@ namespace TheEmporium.Data.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ImagesId")
-                        .HasColumnType("int");
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Manufacturer")
                         .HasColumnType("nvarchar(max)");
@@ -276,8 +260,6 @@ namespace TheEmporium.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ImagesId");
-
                     b.HasIndex("ProductTypeId");
 
                     b.ToTable("Product");
@@ -290,15 +272,10 @@ namespace TheEmporium.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("ImagesId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ImagesId");
 
                     b.ToTable("ProductType");
                 });
@@ -356,20 +333,9 @@ namespace TheEmporium.Data.Migrations
 
             modelBuilder.Entity("TheEmporium.Models.Product", b =>
                 {
-                    b.HasOne("TheEmporium.Models.Images", "Images")
-                        .WithMany()
-                        .HasForeignKey("ImagesId");
-
                     b.HasOne("TheEmporium.Models.ProductType", "ProductType")
                         .WithMany()
                         .HasForeignKey("ProductTypeId");
-                });
-
-            modelBuilder.Entity("TheEmporium.Models.ProductType", b =>
-                {
-                    b.HasOne("TheEmporium.Models.Images", "Images")
-                        .WithMany()
-                        .HasForeignKey("ImagesId");
                 });
 #pragma warning restore 612, 618
         }

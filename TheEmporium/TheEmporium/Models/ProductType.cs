@@ -8,6 +8,7 @@ namespace TheEmporium.Models
 {
     public class ProductType
     {
+        public Images Images { get; set; }
         public int Id { get; set; }
         
         [Display(Name="Product Type")]

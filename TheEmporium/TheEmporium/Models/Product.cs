@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using TheEmporium.Data;
 
 namespace TheEmporium.Models
 {
@@ -8,11 +7,11 @@ namespace TheEmporium.Models
     {
         public int Id { get; set; }
         public ProductType ProductType { get; set; }
+        public Images Images { get; set; }
         public string Manufacturer { get; set; }
         public string Brand { get; set; }
         public string Name { get; set; }
-        public string Description { get; set; }
-        public string Image { get; set; }
+        public string Description { get; set; } 
         public double? Price { get; set; }
         [Display(Name = "Date Created")]
         public DateTime? DateCreated { get; set; }

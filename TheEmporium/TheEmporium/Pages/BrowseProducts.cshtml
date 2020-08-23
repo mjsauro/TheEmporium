@@ -1,13 +1,22 @@
 ﻿@page
 @model TheEmporium.Pages.BrowseProductsModel
 @{
-    ViewData["Title"] = "BrowseProducts";
+	ViewData["Title"] = "BrowseProducts";
 }
 
 <h1>Browse Products</h1>
-
-@foreach (var product in Model.ProductType)
-{
-    <h2>@product.Name</h2>
-}
-
+<div class="row">
+	@foreach (var productType in Model.ProductType)
+	{
+		<div class="col-4">
+			<div class="card">
+				<div class="card-header">
+					<h3>@productType.Name</h3>
+				</div>
+				<div class="card-body">
+					<img src="images/@productType.Images.Location" class="img-fluid" alt="Image of @productType.Name" />
+				</div>
+			</div>
+		</div>
+	}
+</div>

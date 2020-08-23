@@ -40,10 +40,12 @@
                 @Html.DisplayFor(model => model.Product.Description)
             </dd>
             <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Product.Image)
+                @Html.Display("Image")
             </dt>
             <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Product.Image)
+                <div class="row">
+                     <img class="img-fluid" src="~/images/@Model.Product.Images.Location" alt="Image of @Model.Product.Name"/>
+                </div>
             </dd>
             <dt class="col-sm-2">
                 @Html.DisplayNameFor(model => model.Product.Price)
