@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using TheEmporium.Data;
@@ -15,6 +16,15 @@ namespace TheEmporium.Repositories
         {
             _context = context;
         }
+
+        public async Task<IEnumerable<Product>> GetProductTypesByIdAsync(int id)
+        {
+            return await _context.Product
+                .Include(x => x.ProductType)
+                .Include(x => x.Images)
+                .Where(x => x.ProductType.Id == id).ToListAsync();
+        }
+
         public async Task<IEnumerable<Product>> GetProductsAsync()
         {
             return await _context.Product

@@ -9,7 +9,6 @@ namespace TheEmporium.Models
         public ProductType ProductType { get; set; }
         public Images Images { get; set; }
         public string Manufacturer { get; set; }
-        public string Brand { get; set; }
         public string Name { get; set; }
         public string Description { get; set; } 
         public double? Price { get; set; }

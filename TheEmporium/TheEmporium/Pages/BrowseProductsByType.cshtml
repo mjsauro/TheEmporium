@@ -1,0 +1,28 @@
+﻿@page
+@model TheEmporium.Pages.BrowseProductsByTypeModel
+@{
+	ViewData["Title"] = "Browse Products By Type";
+}
+
+<div class="row">
+	@foreach (var product in Model.Products)
+	{
+		<div class="col-4">
+			<div class="card">
+				<div class="card-body">
+					<a class="card-link" asp-page="Product" asp-route-id="@product.Id">
+						<h5 class="card-title">@product.Name</h5>
+					</a>
+					<a asp-page="Product" asp-route-id="@product.Id">
+						<img src="images/@product.Images.Location"
+						     class="img-fluid card-img"
+						     alt="Image of @product.Name" />
+					</a>
+				</div>
+			</div>
+		</div>
+	}
+</div>
+<div class="row">
+	<a asp-page="BrowseProductTypes">Back to List of Product Types</a>
+</div>
