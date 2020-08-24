@@ -22,7 +22,9 @@ namespace TheEmporium.Repositories
             return await _context.Product
                 .Include(x => x.ProductType)
                 .Include(x => x.Images)
-                .Where(x => x.ProductType.Id == id).ToListAsync();
+                .Where(x => x.ProductType.Id == id)
+                .OrderBy(x => x.Name)
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<Product>> GetProductsAsync()
@@ -30,6 +32,7 @@ namespace TheEmporium.Repositories
             return await _context.Product
                 .Include(x => x.ProductType)
                 .Include(x => x.Images)
+                .OrderBy(x => x.Name)
                 .ToListAsync();
         }
 
@@ -37,6 +40,7 @@ namespace TheEmporium.Repositories
         {
             return await _context.ProductType
                 .Include(x => x.Images)
+                .OrderBy(x => x.Name)
                 .ToListAsync();
         }
 
