@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using TheEmporium.Models;
@@ -14,6 +15,7 @@ namespace TheEmporium.Pages
         {
             _productRepository = productRepository;
         }
+        
         public Product Product { get; set; }
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -28,6 +30,23 @@ namespace TheEmporium.Pages
             {
                 return NotFound();
             }
+            return Page();
+        }
+
+        public async Task<IActionResult> OnPostAsync(int id)
+        {
+
+            if (Request.Cookies.TryGetValue("CartID", out string cookies))
+            {
+                TempData["CartID"] = cookies;
+            }
+            else
+            {
+                Response.Cookies.Append("CartID", Guid.NewGuid().ToString());
+                TempData["CartID"] = Request.Cookies["CartID"];
+            }
+            Product = await _productRepository.GetProductByIdAsync(id);
+
             return Page();
         }
     }

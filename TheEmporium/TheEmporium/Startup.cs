@@ -30,6 +30,8 @@ namespace TheEmporium
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
+
 
             services.AddRazorPages();
         }
