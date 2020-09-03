@@ -16,6 +16,10 @@
     <Compile Remove="Data\Migrations\20200822184810_ProductType.Designer.cs" />
     <Compile Remove="Data\Migrations\20200823202612_AddMoreProductTypes.cs" />
     <Compile Remove="Data\Migrations\20200823202612_AddMoreProductTypes.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200903233219_ShoppingCart.cs" />
+    <Compile Remove="Data\Migrations\20200903233219_ShoppingCart.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200903233552_ShoppingCart.cs" />
+    <Compile Remove="Data\Migrations\20200903233552_ShoppingCart.Designer.cs" />
   </ItemGroup>
 
 
