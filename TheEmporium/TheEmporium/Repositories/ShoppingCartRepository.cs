@@ -1,5 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using TheEmporium.Data;
+using TheEmporium.Models;
 using TheEmporium.Repositories.Interfaces;
 
 namespace TheEmporium.Repositories
@@ -12,10 +16,27 @@ namespace TheEmporium.Repositories
             _context = context;
         }
 
-        public Task AddProductToShoppingCart(int productId)
+        public async Task<ShoppingCart> GetShoppingCart(Guid guid)
         {
-            throw new System.NotImplementedException();
+            ShoppingCart shoppingCart = await _context.ShoppingCart.Where(x => x.CartGuid == guid).FirstOrDefaultAsync();
+
+            if (shoppingCart == null)
+            {
+                shoppingCart = new ShoppingCart(Guid.NewGuid());
+                await _context.ShoppingCart.AddAsync(shoppingCart);
+                await _context.SaveChangesAsync();
+            }
+
+            return shoppingCart;
         }
+
+        public async Task AddProductToShoppingCartAsync(int productId, int quantity, ShoppingCart cart)
+        { 
+            ShoppingCartProduct shoppingCartProduct = new ShoppingCartProduct(cart.Id, productId, quantity);
+            await _context.ShoppingCartProducts.AddAsync(shoppingCartProduct);
+            await _context.SaveChangesAsync();
+        }
+
 
         public Task DeleteProductFromShoppingCart(int productId)
         {

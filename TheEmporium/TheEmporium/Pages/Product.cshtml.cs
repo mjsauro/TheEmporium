@@ -10,10 +10,12 @@ namespace TheEmporium.Pages
     public class ProductModel : PageModel
     {
         private readonly IProductRepository _productRepository;
+        private readonly IShoppingCartRepository _shoppingCartRepository;
 
-        public ProductModel(IProductRepository productRepository)
+        public ProductModel(IProductRepository productRepository, IShoppingCartRepository shoppingCartRepository)
         {
             _productRepository = productRepository;
+            _shoppingCartRepository = shoppingCartRepository;
         }
         
         public Product Product { get; set; }
@@ -33,21 +35,34 @@ namespace TheEmporium.Pages
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(int id)
+        public async Task<IActionResult> OnPostAsync(int id, int quantity)
         {
 
-            if (Request.Cookies.TryGetValue("CartID", out string cookies))
-            {
-                TempData["CartID"] = cookies;
-            }
-            else
-            {
-                Response.Cookies.Append("CartID", Guid.NewGuid().ToString());
-                TempData["CartID"] = Request.Cookies["CartID"];
-            }
-            Product = await _productRepository.GetProductByIdAsync(id);
+            Guid cartGuid = GetCartGuid();
+            Response.Cookies.Append("CartID", cartGuid.ToString());
+            TempData["CartID"] = cartGuid.ToString();
+
+           ShoppingCart cart = await _shoppingCartRepository.GetShoppingCart(cartGuid);
+
+            //TODO if it already exists in cart, we have to update the quantity rather than insert
+           await _shoppingCartRepository.AddProductToShoppingCartAsync(id, quantity, cart);
+
+           Product = await _productRepository.GetProductByIdAsync(id);
 
             return Page();
+        }
+
+        private Guid GetCartGuid()
+        {
+            bool isThereACartId = Request.Cookies.TryGetValue("CartID", out string cartGuid);
+
+            if (isThereACartId)
+            {
+                bool isAGuid = Guid.TryParse(cartGuid, out var cartId);
+                return isAGuid ? cartId : Guid.NewGuid();
+            }
+
+            return Guid.NewGuid();
         }
     }
 }

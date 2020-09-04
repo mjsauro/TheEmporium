@@ -8,5 +8,10 @@ namespace TheEmporium.Models
         public int Id { get; set; }
         public Guid CartGuid { get; set; }
         public ICollection<ShoppingCartProduct> ShoppingCartProducts { get; set; }
+
+        public ShoppingCart(Guid cartGuid)
+        {
+            CartGuid = cartGuid;
+        }
     }
 }
