@@ -18,7 +18,7 @@ namespace TheEmporium.Repositories
 
         public async Task<ShoppingCart> GetShoppingCart(Guid guid)
         {
-            ShoppingCart shoppingCart = await _context.ShoppingCart.Where(x => x.CartGuid == guid).FirstOrDefaultAsync();
+            ShoppingCart shoppingCart = await _context.ShoppingCart.Include(x => x.ShoppingCartProducts).Where(x => x.CartGuid == guid).FirstOrDefaultAsync();
 
             if (shoppingCart == null)
             {
@@ -34,10 +34,17 @@ namespace TheEmporium.Repositories
         }
 
         public async Task AddProductToShoppingCartAsync(int cartId, int productId, int quantity)
-        { 
+        {
             ShoppingCartProduct shoppingCartProduct = new ShoppingCartProduct(cartId, productId, quantity);
             await _context.ShoppingCartProducts.AddAsync(shoppingCartProduct);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateProductInShoppingCartAsync(ShoppingCartProduct shoppingCartProduct)
+        {
+            _context.ShoppingCartProducts.Update(shoppingCartProduct);
+            await _context.SaveChangesAsync();
+
         }
 
 

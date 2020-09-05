@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -42,14 +43,33 @@ namespace TheEmporium.Pages
             Response.Cookies.Append("CartID", cartGuid.ToString());
             TempData["CartID"] = cartGuid.ToString();
 
-            ShoppingCart cart = await _shoppingCartRepository.GetShoppingCart(cartGuid);
-
-            //TODO if it already exists in cart, we have to update the quantity rather than insert
-            await _shoppingCartRepository.AddProductToShoppingCartAsync(cart.Id, product.Id, quantity);
+            await AddOrUpdateShoppingCart(product, quantity, cartGuid);
 
             Product = product;
             ViewData["Result"] = "Success";
             return Page();
+        }
+
+        private async Task AddOrUpdateShoppingCart(Product product, int quantity, Guid cartGuid)
+        {
+            ShoppingCart cart = await _shoppingCartRepository.GetShoppingCart(cartGuid);
+
+            ShoppingCartProduct existingCartProduct = null;
+
+            if (cart.ShoppingCartProducts != null)
+            {
+                existingCartProduct = cart.ShoppingCartProducts.FirstOrDefault(x => x.ProductId == product.Id);
+            }
+
+            if (existingCartProduct != null && existingCartProduct.Quantity > 0)
+            {
+                existingCartProduct.Quantity += quantity;
+                await _shoppingCartRepository.UpdateProductInShoppingCartAsync(existingCartProduct);
+            }
+            else
+            {
+                await _shoppingCartRepository.AddProductToShoppingCartAsync(cart.Id, product.Id, quantity);
+            }
         }
 
         private Guid GetCartGuid()

@@ -8,6 +8,7 @@ namespace TheEmporium.Repositories.Interfaces
     {
         Task<ShoppingCart> GetShoppingCart(Guid guid);
         Task AddProductToShoppingCartAsync(int cartId, int productId, int quantity);
+        Task UpdateProductInShoppingCartAsync(ShoppingCartProduct shoppingCartProduct);
         Task DeleteProductFromShoppingCart(int productId);
 
     }
