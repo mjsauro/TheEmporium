@@ -7,7 +7,7 @@ namespace TheEmporium.Repositories.Interfaces
     public interface IShoppingCartRepository
     {
         Task<ShoppingCart> GetShoppingCart(Guid guid);
-        Task AddProductToShoppingCartAsync(int productId, int quantity, ShoppingCart cart);
+        Task AddProductToShoppingCartAsync(int cartId, int productId, int quantity);
         Task DeleteProductFromShoppingCart(int productId);
 
     }

@@ -22,7 +22,10 @@ namespace TheEmporium.Repositories
 
             if (shoppingCart == null)
             {
-                shoppingCart = new ShoppingCart(Guid.NewGuid());
+                shoppingCart = new ShoppingCart(guid);
+                var now = DateTime.Now;
+                shoppingCart.DateCreated = now;
+                shoppingCart.DateModified = now;
                 await _context.ShoppingCart.AddAsync(shoppingCart);
                 await _context.SaveChangesAsync();
             }
@@ -30,9 +33,9 @@ namespace TheEmporium.Repositories
             return shoppingCart;
         }
 
-        public async Task AddProductToShoppingCartAsync(int productId, int quantity, ShoppingCart cart)
+        public async Task AddProductToShoppingCartAsync(int cartId, int productId, int quantity)
         { 
-            ShoppingCartProduct shoppingCartProduct = new ShoppingCartProduct(cart.Id, productId, quantity);
+            ShoppingCartProduct shoppingCartProduct = new ShoppingCartProduct(cartId, productId, quantity);
             await _context.ShoppingCartProducts.AddAsync(shoppingCartProduct);
             await _context.SaveChangesAsync();
         }

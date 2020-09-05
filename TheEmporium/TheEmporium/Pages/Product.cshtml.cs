@@ -17,7 +17,7 @@ namespace TheEmporium.Pages
             _productRepository = productRepository;
             _shoppingCartRepository = shoppingCartRepository;
         }
-        
+
         public Product Product { get; set; }
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -26,7 +26,7 @@ namespace TheEmporium.Pages
                 return NotFound();
             }
 
-            Product = await _productRepository.GetProductByIdAsync((int) id);
+            Product = await _productRepository.GetProductByIdAsync((int)id);
 
             if (Product == null)
             {
@@ -35,20 +35,20 @@ namespace TheEmporium.Pages
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(int id, int quantity)
+        public async Task<IActionResult> OnPostAsync(Product product, int quantity)
         {
-
+            
             Guid cartGuid = GetCartGuid();
             Response.Cookies.Append("CartID", cartGuid.ToString());
             TempData["CartID"] = cartGuid.ToString();
 
-           ShoppingCart cart = await _shoppingCartRepository.GetShoppingCart(cartGuid);
+            ShoppingCart cart = await _shoppingCartRepository.GetShoppingCart(cartGuid);
 
             //TODO if it already exists in cart, we have to update the quantity rather than insert
-           await _shoppingCartRepository.AddProductToShoppingCartAsync(id, quantity, cart);
+            await _shoppingCartRepository.AddProductToShoppingCartAsync(cart.Id, product.Id, quantity);
 
-           Product = await _productRepository.GetProductByIdAsync(id);
-
+            Product = product;
+            ViewData["Result"] = "Success";
             return Page();
         }
 

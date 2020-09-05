@@ -18,7 +18,5 @@ namespace TheEmporium.Models
         public DateTime? DateCreated { get; set; }
         [Display(Name = "Date Modified")]
         public DateTime? DateModified { get; set; }
-        public int? Quantity { get; set; }
-
     }
 }
