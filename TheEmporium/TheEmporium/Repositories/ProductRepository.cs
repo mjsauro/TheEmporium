@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -8,18 +9,16 @@ using TheEmporium.Repositories.Interfaces;
 
 namespace TheEmporium.Repositories
 {
-    public class ProductRepository : IProductRepository
+    
+    public class ProductRepository : Repository<Product>,  IProductRepository
     {
-        private readonly ApplicationDbContext _context;
-
-        public ProductRepository(ApplicationDbContext context)
+        public ProductRepository(ApplicationDbContext context) : base(context)
         {
-            _context = context;
         }
 
         public async Task<IEnumerable<Product>> GetProductTypesByIdAsync(int id)
         {
-            return await _context.Product
+            return await Context.Product
                 .Include(x => x.ProductType)
                 .Include(x => x.Images)
                 .Where(x => x.ProductType.Id == id)
@@ -29,7 +28,7 @@ namespace TheEmporium.Repositories
 
         public async Task<IEnumerable<Product>> GetProductsAsync()
         {
-            return await _context.Product
+            return await Context.Product
                 .Include(x => x.ProductType)
                 .Include(x => x.Images)
                 .OrderBy(x => x.Name)
@@ -38,7 +37,7 @@ namespace TheEmporium.Repositories
 
         public async Task<IEnumerable<ProductType>> GetProductTypesAsync()
         {
-            return await _context.ProductType
+            return await Context.ProductType
                 .Include(x => x.Images)
                 .OrderBy(x => x.Name)
                 .ToListAsync();
@@ -46,10 +45,36 @@ namespace TheEmporium.Repositories
 
         public Task<Product> GetProductByIdAsync(int id)
         {
-            return _context.Product
+            return Context.Product
                 .Include(m => m.ProductType)
                 .Include(x => x.Images)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .SingleOrDefaultAsync(m => m.Id == id);
         }
+
+        public async Task UpdateProductAsync(Product product)
+        {
+            if (ProductExists(product.Id))
+            {
+                Context.Entry(product).State = EntityState.Modified;
+                await Context.SaveChangesAsync();
+            }
+            else
+            {
+                throw new DBConcurrencyException();
+            }
+        }
+
+        public async Task<int> AddProductAsync(Product product)
+        {
+            await Context.AddAsync(product);
+            return await Context.SaveChangesAsync();
+        }
+
+        private bool ProductExists(int id)
+        {
+            return Context.Product.Any(e => e.Id == id);
+        }
+
+       
     }
 }

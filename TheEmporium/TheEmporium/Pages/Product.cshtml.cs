@@ -12,11 +12,13 @@ namespace TheEmporium.Pages
     {
         private readonly IProductRepository _productRepository;
         private readonly IShoppingCartRepository _shoppingCartRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public ProductModel(IProductRepository productRepository, IShoppingCartRepository shoppingCartRepository)
+        public ProductModel(IProductRepository productRepository, IShoppingCartRepository shoppingCartRepository, IUnitOfWork unitOfWork)
         {
             _productRepository = productRepository;
             _shoppingCartRepository = shoppingCartRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public Product Product { get; set; }
@@ -27,7 +29,13 @@ namespace TheEmporium.Pages
                 return NotFound();
             }
 
-            Product = await _productRepository.GetProductByIdAsync((int)id);
+
+            //which is better?
+            Product = await _unitOfWork.ProductsRepository.Get((int) id);
+
+            Product = await _unitOfWork.ProductsRepository.Get(
+                x => x.Id == (int) id, 
+                x => x.Images, x => x.ProductType);
 
             if (Product == null)
             {
