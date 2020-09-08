@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TheEmporium.Data;
@@ -84,7 +82,7 @@ namespace TheEmporium.Controllers
         [HttpPost]
         public async Task<ActionResult<ProductType>> PostProductType(ProductType productType)
         {
-            _context.ProductType.Add(productType);
+            await _productTypeRepository.Add(productType);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetProductType", new { id = productType.Id }, productType);
@@ -94,13 +92,13 @@ namespace TheEmporium.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<ProductType>> DeleteProductType(int id)
         {
-            var productType = await _context.ProductType.FindAsync(id);
+            var productType = await _productTypeRepository.Get(id);
             if (productType == null)
             {
                 return NotFound();
             }
 
-            _context.ProductType.Remove(productType);
+            _productTypeRepository.Remove(productType);
             await _context.SaveChangesAsync();
 
             return productType;

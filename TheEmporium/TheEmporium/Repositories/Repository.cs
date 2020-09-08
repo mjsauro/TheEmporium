@@ -50,21 +50,25 @@ namespace TheEmporium.Repositories
         public async Task Add(TEntity entity)
         {
             await Context.Set<TEntity>().AddAsync(entity);
+            await Context.SaveChangesAsync();
         }
 
         public async Task AddRange(IEnumerable<TEntity> entities)
         {
             await Context.Set<TEntity>().AddRangeAsync(entities);
+            await Context.SaveChangesAsync();
         }
 
         public void Remove(TEntity entity)
         {
             Context.Set<TEntity>().Remove(entity);
+            Context.SaveChangesAsync();
         }
 
         public void RemoveRange(IEnumerable<TEntity> entities)
         {
             Context.Set<TEntity>().RemoveRange(entities);
+            Context.SaveChangesAsync();
         }
     }
 }

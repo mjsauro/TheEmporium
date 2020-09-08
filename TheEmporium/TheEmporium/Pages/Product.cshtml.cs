@@ -13,13 +13,11 @@ namespace TheEmporium.Pages
         private readonly IProductRepository _productRepository;
         private readonly IShoppingCartRepository _shoppingCartRepository;
         private readonly IUnitOfWork _unitOfWork;
-
         public ProductModel(IProductRepository productRepository, IShoppingCartRepository shoppingCartRepository, IUnitOfWork unitOfWork)
         {
             _productRepository = productRepository;
             _shoppingCartRepository = shoppingCartRepository;
-            _unitOfWork = unitOfWork;
-        }
+            _unitOfWork = unitOfWork; }
 
         public Product Product { get; set; }
         public async Task<IActionResult> OnGetAsync(int? id)

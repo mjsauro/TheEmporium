@@ -22,10 +22,14 @@
     <Compile Remove="Data\Migrations\20200903233552_ShoppingCart.Designer.cs" />
     <Compile Remove="Data\Migrations\20200908205301_Test.cs" />
     <Compile Remove="Data\Migrations\20200908205301_Test.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200908213402_MakeProductPropertiesVirtual.cs" />
+    <Compile Remove="Data\Migrations\20200908213402_MakeProductPropertiesVirtual.Designer.cs" />
   </ItemGroup>
 
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="10.0.0" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.7" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.7" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.7" />

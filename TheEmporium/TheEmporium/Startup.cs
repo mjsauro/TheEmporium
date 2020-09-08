@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Hosting;
@@ -35,9 +36,8 @@ namespace TheEmporium
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IProductTypeRepository, ProductTypeRepository>();
             services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
-            
-            services.AddRazorPages().AddJsonOptions(options => options.JsonSerializerOptions.IgnoreNullValues = true);
-            
+            services.AddAutoMapper(typeof(Startup));
+            services.AddRazorPages();
             services.AddSwaggerGen();
         }
 

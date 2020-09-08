@@ -7,9 +7,9 @@ namespace TheEmporium
     {
         private readonly ApplicationDbContext _context;
         public IProductRepository ProductsRepository { get; }
-        public IProductRepository ShoppingCartRepository { get; }
+        public IShoppingCartRepository ShoppingCartRepository { get; }
 
-        public UnitOfWork(ApplicationDbContext context, IProductRepository productsRepository, IProductRepository shoppingCartRepository)
+        public UnitOfWork(ApplicationDbContext context, IProductRepository productsRepository, IShoppingCartRepository shoppingCartRepository)
         {
             _context = context;
             ProductsRepository = productsRepository;
@@ -25,8 +25,6 @@ namespace TheEmporium
         {
             _context.Dispose();
         }
-
-        
 
     }
 }

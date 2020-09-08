@@ -6,7 +6,7 @@ namespace TheEmporium
     public interface IUnitOfWork : IDisposable
     {
         IProductRepository ProductsRepository { get; }
-        IProductRepository ShoppingCartRepository { get; }
+        IShoppingCartRepository ShoppingCartRepository { get; }
         int Complete();
     }
 }

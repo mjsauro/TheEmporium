@@ -15,17 +15,16 @@ namespace TheEmporium.Repositories
         {
         }
 
-        public async Task<IEnumerable<Product>> GetProductsAsync()
+        public async Task<IEnumerable<Product>> GetProductsWithProductTypesAndImages()
         {
             return await Context.Product
                 .Include(x => x.ProductType)
-                .Include(x => x.ProductType.Images)
                 .Include(x => x.Images)
                 .ToListAsync();
         }
 
 
-        public Task<Product> GetProductByIdAsync(int id)
+        public Task<Product> GetProductByIdWithProductTypeAndImage(int id)
         {
             return Context.Product
                 .Include(m => m.ProductType)
