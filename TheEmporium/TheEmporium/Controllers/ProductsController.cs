@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using TheEmporium.Data;
@@ -15,7 +14,6 @@ namespace TheEmporium.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IProductRepository _productRepository;
-
         public ProductsController(ApplicationDbContext context, IProductRepository productRepository)
         {
             _context = context;
@@ -26,7 +24,7 @@ namespace TheEmporium.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProduct()
         {
-            var products = await _productRepository.GetProductsAsync();
+            var products = await _productRepository.GetAll();
 
             return Ok(products);
 
@@ -36,7 +34,7 @@ namespace TheEmporium.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
-            var product = await _productRepository.GetProductByIdAsync(id);
+            var product = await _productRepository.Get(id);
 
             if (product == null)
             {

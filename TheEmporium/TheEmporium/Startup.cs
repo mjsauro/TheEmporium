@@ -30,13 +30,14 @@ namespace TheEmporium
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IProductTypeRepository, ProductTypeRepository>();
             services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
-
-
-            services.AddRazorPages();
-
+            
+            services.AddRazorPages().AddJsonOptions(options => options.JsonSerializerOptions.IgnoreNullValues = true);
+            
             services.AddSwaggerGen();
         }
 

@@ -9,17 +9,17 @@ namespace TheEmporium.Pages
 {
     public class BrowseProductsModel : PageModel
     {
-        private readonly IProductRepository _productRepository;
+        private readonly IProductTypeRepository _productTypeRepository;
         public  IEnumerable<ProductType> ProductType { get; set; }
 
-        public BrowseProductsModel(IProductRepository productRepository)
+        public BrowseProductsModel(IProductTypeRepository productTypeRepository)
         {
-            _productRepository = productRepository;
+            _productTypeRepository = productTypeRepository;
         }
         
         public async Task<IActionResult> OnGetAsync()
         {
-            ProductType = await _productRepository.GetProductTypesAsync();
+            ProductType = await _productTypeRepository.GetProductTypesWithImages();
 
             return Page();
         }
