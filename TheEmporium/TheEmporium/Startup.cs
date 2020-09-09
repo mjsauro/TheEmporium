@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TheEmporium.Repositories;
 using TheEmporium.Repositories.Interfaces;
+using TheEmporium.Services;
 
 namespace TheEmporium
 {
@@ -30,12 +31,11 @@ namespace TheEmporium
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IProductTypeRepository, ProductTypeRepository>();
             services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
+            services.AddScoped<IShoppingCartService, ShoppingCartService>();
             services.AddAutoMapper(typeof(Startup));
             services.AddRazorPages();
             services.AddSwaggerGen();

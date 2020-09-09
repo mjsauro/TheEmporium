@@ -1,23 +1,26 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using TheEmporium.Models;
 using TheEmporium.Repositories.Interfaces;
+using TheEmporium.Services;
 
 namespace TheEmporium.Pages
 {
     public class ProductModel : PageModel
     {
         private readonly IProductRepository _productRepository;
-        private readonly IShoppingCartRepository _shoppingCartRepository;
-        private readonly IUnitOfWork _unitOfWork;
-        public ProductModel(IProductRepository productRepository, IShoppingCartRepository shoppingCartRepository, IUnitOfWork unitOfWork)
+        private readonly IShoppingCartService _shoppingCartService;
+        private readonly IHttpContextAccessor _httpContext;
+
+        public ProductModel(IProductRepository productRepository, IShoppingCartService shoppingCartService, IHttpContextAccessor httpContext)
         {
             _productRepository = productRepository;
-            _shoppingCartRepository = shoppingCartRepository;
-            _unitOfWork = unitOfWork; }
+            _shoppingCartService = shoppingCartService;
+            _httpContext = httpContext;
+        }
 
         public Product Product { get; set; }
         public async Task<IActionResult> OnGetAsync(int? id)
@@ -27,68 +30,33 @@ namespace TheEmporium.Pages
                 return NotFound();
             }
 
-
-            //which is better?
-            Product = await _unitOfWork.ProductsRepository.Get((int) id);
-
-            Product = await _unitOfWork.ProductsRepository.Get(
-                x => x.Id == (int) id, 
-                x => x.Images, x => x.ProductType);
+            Product = await _productRepository.GetProductByIdWithProductTypeAndImage((int)id);
 
             if (Product == null)
             {
                 return NotFound();
             }
+
             return Page();
         }
 
         public async Task<IActionResult> OnPostAsync(Product product, int quantity)
         {
-            
-            Guid cartGuid = GetCartGuid();
-            Response.Cookies.Append("CartID", cartGuid.ToString());
+            Guid cartGuid = _shoppingCartService.GetCartGuid(_httpContext);
             TempData["CartID"] = cartGuid.ToString();
-
-            await AddOrUpdateShoppingCart(product, quantity, cartGuid);
+            
+            try
+            {
+                await _shoppingCartService.AddProductToShoppingCart(product, quantity, cartGuid);
+                ViewData["Result"] = "Success";
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
 
             Product = product;
-            ViewData["Result"] = "Success";
             return Page();
-        }
-
-        private async Task AddOrUpdateShoppingCart(Product product, int quantity, Guid cartGuid)
-        {
-            ShoppingCart cart = await _shoppingCartRepository.GetShoppingCart(cartGuid);
-
-            ShoppingCartProduct existingCartProduct = null;
-
-            if (cart.ShoppingCartProducts != null)
-            {
-                existingCartProduct = cart.ShoppingCartProducts.FirstOrDefault(x => x.ProductId == product.Id);
-            }
-
-            if (existingCartProduct != null && existingCartProduct.Quantity > 0)
-            {
-                existingCartProduct.Quantity += quantity;
-                await _shoppingCartRepository.UpdateProductInShoppingCartAsync(existingCartProduct);
-            }
-            else
-            {
-                await _shoppingCartRepository.AddProductToShoppingCartAsync(cart.Id, product.Id, quantity);
-            }
-        }
-
-        private Guid GetCartGuid()
-        {
-            bool isThereACartId = Request.Cookies.TryGetValue("CartID", out string cartGuid);
-
-            if (isThereACartId)
-            {
-                bool isAGuid = Guid.TryParse(cartGuid, out var cartId);
-                return isAGuid ? cartId : Guid.NewGuid();
-            }
-
-            return Guid.NewGuid();
         }
     }
 }
