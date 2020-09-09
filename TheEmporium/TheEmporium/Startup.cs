@@ -34,6 +34,7 @@ namespace TheEmporium
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IProductTypeRepository, ProductTypeRepository>();
+            services.AddScoped<IImageRepository, ImageRepository>();
             services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
             services.AddScoped<IShoppingCartService, ShoppingCartService>();
             services.AddAutoMapper(typeof(Startup));

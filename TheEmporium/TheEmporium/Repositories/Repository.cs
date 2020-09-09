@@ -59,6 +59,12 @@ namespace TheEmporium.Repositories
             await Context.SaveChangesAsync();
         }
 
+        public async Task Update(TEntity entity)
+        {
+            Context.Entry(entity).State = EntityState.Modified;
+            await Context.SaveChangesAsync();
+        }
+
         public void Remove(TEntity entity)
         {
             Context.Set<TEntity>().Remove(entity);

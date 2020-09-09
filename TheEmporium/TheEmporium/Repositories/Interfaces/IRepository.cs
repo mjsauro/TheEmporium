@@ -15,12 +15,12 @@ namespace TheEmporium.Repositories.Interfaces
         Task<IEnumerable<TEntity>> GetAll();
         Task<IEnumerable<TEntity>> Find(Expression<Func<TEntity, bool>> predicate);
 
+        Task Update(TEntity entity);
 
         Task Add(TEntity entity);
         Task AddRange(IEnumerable<TEntity> entities);
 
         void Remove(TEntity entity);
         void RemoveRange(IEnumerable<TEntity> entities);
-
     }
 }
