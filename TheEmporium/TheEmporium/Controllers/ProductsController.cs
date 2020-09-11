@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+using TheEmporium.Data;
 using TheEmporium.Models;
 using TheEmporium.Models.DTOs;
-using TheEmporium.Repositories.Interfaces;
 
 namespace TheEmporium.Controllers
 {
@@ -15,11 +15,11 @@ namespace TheEmporium.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private readonly IProductRepository _productRepository;
+        private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
-        public ProductsController(IProductRepository productRepository, IMapper mapper)
+        public ProductsController(ApplicationDbContext context, IMapper mapper)
         {
-            _productRepository = productRepository;
+            _context = context;
             _mapper = mapper;
         }
 
@@ -27,8 +27,8 @@ namespace TheEmporium.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProductDto>>> GetProduct()
         {
-            var products = await _productRepository.GetAll();
-            IEnumerable<ProductDto> productDtos = _mapper.Map<IEnumerable<ProductDto>>(products);
+            var products = await _context.Product.ToListAsync();
+            var productDtos = _mapper.Map<IEnumerable<ProductDto>>(products);
             return Ok(productDtos);
 
         }
@@ -37,8 +37,7 @@ namespace TheEmporium.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ProductDto>> GetProduct(int id)
         {
-            var product = await _productRepository.Get(id);
-
+            var product = await _context.Product.FindAsync(id);
             if (product == null)
             {
                 return NotFound();
@@ -54,17 +53,31 @@ namespace TheEmporium.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProduct(int id, ProductDto productDto)
         {
+            
+            if (id != productDto.Id)
+            {
+                return BadRequest();
+            }
 
-            Product product = _mapper.Map<Product>(productDto);
-            product.Id = id;
+            var product = _mapper.Map<Product>(productDto);
             product.DateModified = DateTime.Now;
+
+            _context.Entry(product).State = EntityState.Modified;
+
             try
             {
-                await _productRepository.UpdateProductAsync(product);
+                await _context.SaveChangesAsync();
             }
-            catch (DBConcurrencyException)
+            catch (DbUpdateConcurrencyException)
             {
-                return NotFound();
+                if (!ProductExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
             }
 
             return NoContent();
@@ -79,7 +92,7 @@ namespace TheEmporium.Controllers
             Product product = _mapper.Map<Product>(productDto);
             product.DateModified =DateTime.Now;
             product.DateCreated = DateTime.Now;
-            await _productRepository.Add(product);
+            await _context.Product.AddAsync(product);
             return CreatedAtAction("GetProduct", new { id = product.Id }, product);
         }
 
@@ -87,15 +100,20 @@ namespace TheEmporium.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Product>> DeleteProduct(int id)
         {
-            var product = await _productRepository.Get(id);
+            var product = await _context.Product.FindAsync(id);
             if (product == null)
             {
                 return NotFound();
             }
 
-            _productRepository.Remove(product);
+            _context.Product.Remove(product);
 
             return product;
+        }
+
+        private bool ProductExists(int id)
+        {
+            return _context.Product.Any(e => e.Id == id);
         }
     }
 }

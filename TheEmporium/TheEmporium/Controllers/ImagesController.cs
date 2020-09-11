@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TheEmporium.Data;
 using TheEmporium.Models;
-using TheEmporium.Repositories.Interfaces;
 
 namespace TheEmporium.Controllers
 {
@@ -16,28 +13,24 @@ namespace TheEmporium.Controllers
     public class ImagesController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        private readonly IImageRepository _imageRepository;
 
-        public ImagesController(ApplicationDbContext context, IImageRepository imageRepository)
+        public ImagesController(ApplicationDbContext context)
         {
             _context = context;
-            _imageRepository = imageRepository;
         }
 
         // GET: api/Images
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<Images>), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<Images>>> GetImages()
         {
-            var images = await _imageRepository.GetAll();
-            return Ok(images);
+            return await _context.Images.ToListAsync();
         }
 
         // GET: api/Images/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Images>> GetImages(int id)
         {
-            var images = await _imageRepository.Get(id);
+            var images = await _context.Images.FindAsync(id);
 
             if (images == null)
             {
@@ -58,7 +51,24 @@ namespace TheEmporium.Controllers
                 return BadRequest();
             }
 
-            await _imageRepository.Update(images);
+            _context.Entry(images).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ImagesExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
             return NoContent();
         }
 
@@ -68,7 +78,8 @@ namespace TheEmporium.Controllers
         [HttpPost]
         public async Task<ActionResult<Images>> PostImages(Images images)
         {
-            await _imageRepository.Add(images);
+            _context.Images.Add(images);
+            await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetImages", new { id = images.Id }, images);
         }
@@ -77,15 +88,21 @@ namespace TheEmporium.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Images>> DeleteImages(int id)
         {
-            var images = await _imageRepository.Get(id);
+            var images = await _context.Images.FindAsync(id);
             if (images == null)
             {
                 return NotFound();
             }
 
-            _imageRepository.Remove(images);
+            _context.Images.Remove(images);
+            await _context.SaveChangesAsync();
 
             return images;
+        }
+
+        private bool ImagesExists(int id)
+        {
+            return _context.Images.Any(e => e.Id == id);
         }
     }
 }

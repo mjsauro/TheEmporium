@@ -10,6 +10,10 @@ namespace TheEmporium
         {
             CreateMap<Product, ProductDto>();
             CreateMap<ProductDto, Product>();
+            CreateMap<ProductType, ProductTypeDto>();
+            CreateMap<ProductTypeDto, ProductType>();
+            CreateMap<ShoppingCart, ShoppingCartDto>();
+            CreateMap<ShoppingCartDto, ShoppingCart>();
         }
     }
 }

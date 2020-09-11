@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TheEmporium.Data;
 using TheEmporium.Models;
-using TheEmporium.Repositories.Interfaces;
+using TheEmporium.Models.DTOs;
 
 namespace TheEmporium.Controllers
 {
@@ -14,27 +15,27 @@ namespace TheEmporium.Controllers
     public class ProductTypesController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        private readonly IProductTypeRepository _productTypeRepository;
-
-        public ProductTypesController(ApplicationDbContext context, IProductTypeRepository productTypeRepository)
+        private readonly IMapper _mapper;
+        public ProductTypesController(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
-            _productTypeRepository = productTypeRepository;
+            _mapper = mapper;
         }
 
         // GET: api/ProductTypes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductType>>> GetProductType()
+        public async Task<ActionResult<IEnumerable<ProductTypeDto>>> GetProductType()
         {
-            var productTypes =  await _productTypeRepository.GetAll();
-            return Ok(productTypes);
+            var productTypes =  await _context.ProductType.ToListAsync();
+            var productDtos = _mapper.Map<IEnumerable<ProductTypeDto>>(productTypes);
+            return Ok(productDtos);
         }
 
         // GET: api/ProductTypes/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ProductType>> GetProductType(int id)
         {
-            var productType = await _productTypeRepository.Get(id);
+            var productType = await _context.ProductType.FindAsync(id);
 
             if (productType == null)
             {
@@ -82,7 +83,7 @@ namespace TheEmporium.Controllers
         [HttpPost]
         public async Task<ActionResult<ProductType>> PostProductType(ProductType productType)
         {
-            await _productTypeRepository.Add(productType);
+            await _context.ProductType.AddAsync(productType);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetProductType", new { id = productType.Id }, productType);
@@ -92,13 +93,13 @@ namespace TheEmporium.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<ProductType>> DeleteProductType(int id)
         {
-            var productType = await _productTypeRepository.Get(id);
+            var productType = await _context.ProductType.FindAsync(id);
             if (productType == null)
             {
                 return NotFound();
             }
 
-            _productTypeRepository.Remove(productType);
+            _context.ProductType.Remove(productType);
             await _context.SaveChangesAsync();
 
             return productType;
