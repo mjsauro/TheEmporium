@@ -25,7 +25,8 @@ namespace TheEmporium.Pages
             }
 
             ShoppingCart = await _context.ShoppingCart
-                .Include(x=>x.ShoppingCartProducts)
+                .Include(x => x.ShoppingCartProducts)
+                .ThenInclude(p => p.Product)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
 
