@@ -24,6 +24,8 @@
     <Compile Remove="Data\Migrations\20200908205301_Test.Designer.cs" />
     <Compile Remove="Data\Migrations\20200908213402_MakeProductPropertiesVirtual.cs" />
     <Compile Remove="Data\Migrations\20200908213402_MakeProductPropertiesVirtual.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200911024722_ForeignKeyFixForCartProduct.cs" />
+    <Compile Remove="Data\Migrations\20200911024722_ForeignKeyFixForCartProduct.Designer.cs" />
   </ItemGroup>
 
 
